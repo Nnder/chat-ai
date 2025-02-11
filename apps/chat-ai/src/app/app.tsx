@@ -15,44 +15,61 @@ export function App() {
   const [items, setItems] = useState<IQuestion[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // fetch('http://localhost:3000/api/chat/question', {
-  //   method: 'POST',
-  //   headers: { 'Content-Type': 'application/json;charset=utf-8' },
-  //   body: JSON.stringify(q),
-  // })
-  //   .then((response) => {
-  //     // Получаем reader для обработки потока
-  //     const reader = response.body.getReader();
-  //     const decoder = new TextDecoder();
+  const setData = async (
+    items: IQuestion[],
+    index: number,
+    question: string
+  ) => {
+    fetch('http://localhost:3000/api/chat/question', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json;charset=utf-8' },
+      body: JSON.stringify({ question }),
+    })
+      .then((response) => {
+        // Получаем reader для обработки потока
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
 
-  //     // Функция для чтения порций данных
-  //     function read() {
-  //       reader
-  //         .read()
-  //         .then(({ done, value }) => {
-  //           if (done) {
-  //             console.log('Поток завершён');
-  //             return;
-  //           }
-  //           // Декодируем полученный фрагмент и выводим его в консоль
-  //           const chunk = decoder.decode(value, { stream: true });
-  //           console.log('Полученные данные:', chunk);
-  //           // Рекурсивно считываем следующий фрагмент
-  //           read();
-  //         })
-  //         .catch((error) => {
-  //           console.error('Ошибка при чтении потока:', error);
-  //         });
-  //     }
+        // Функция для чтения порций данных
+        function read() {
+          reader
+            .read()
+            .then(({ done, value }) => {
+              if (done) {
+                console.log('Поток завершён');
+                setLoading(false);
+                return;
+              }
+              // Декодируем полученный фрагмент и выводим его в консоль
+              const chunk = decoder.decode(value, { stream: true });
+              const d = [...items];
+              console.log(index);
+              console.log(d);
+              d[index].answer += chunk;
+              setItems(d);
+              console.log('Полученные данные:', chunk);
+              // Рекурсивно считываем следующий фрагмент
+              read();
+            })
+            .catch((error) => {
+              console.error('Ошибка при чтении потока:', error);
+            });
+        }
 
-  //     read();
-  //   })
-  //   .catch((error) => {
-  //     console.error('Ошибка запроса:', error);
-  //   });
+        read();
+      })
+      .catch((error) => {
+        console.error('Ошибка запроса:', error);
+      });
+  };
 
-  const Send = () => {
-    setItems((prev) => [...prev, { message: question, answer: '123' }]);
+  const Send = async () => {
+    setItems((prev) => {
+      const newItems = [...prev, { message: question, answer: '' }];
+      setData(newItems, newItems.length - 1, question);
+      return newItems;
+    });
+
     setQuestion('');
     setLoading(true);
   };
