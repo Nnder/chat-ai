@@ -4,10 +4,11 @@ import { IMessage, MessageStatus } from "../types/types";
 export const useChat = () => {
     const [loading, setLoading] = useState(false);
     const [items, setItems] = useState<IMessage[]>([]);
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
   
     const setData = useCallback(async (items: IMessage[], index: number, question: string) => {
       try {
-        const response = await fetch('http://localhost:3000/api/chat/question', {
+        const response = await fetch(`${backendUrl}/api/chat/question`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json;charset=utf-8' },
           body: JSON.stringify({ question }),
