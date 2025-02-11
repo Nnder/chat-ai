@@ -13,7 +13,8 @@ export class AppController {
   }
 
   @Post('question')
-  async newQuestion(@Res() res: Response, @Body() dto: any) {
+  async newQuestion(@Res() res: Response, @Body() body) {
+    console.log(body.question)
     const openai = new OpenAI({
       baseURL: "https://openrouter.ai/api/v1",
       apiKey: process.env.DEEPSEEK_API_KEY ?? '',
@@ -27,7 +28,7 @@ export class AppController {
         messages: [
           {
             "role": "user",
-            "content": "расскажи про языки программирования, напиши подробно минимум 50 предложений, в каждом предложении минимум 300 символов"
+            "content": body.question
           }
         ],
         stream: true,
