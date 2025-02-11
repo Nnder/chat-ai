@@ -1,7 +1,7 @@
 import { LoaderCircle } from 'lucide-react';
 import { IMessage } from '../types/types';
 
-export const MessageItem = (item: IMessage) => {
+export const MessageItem = ({ item }: { item: IMessage }) => {
   return (
     <div className="h-full flex flex-col overflow-hidden">
       <div className="text-right p-2">{item.message}</div>

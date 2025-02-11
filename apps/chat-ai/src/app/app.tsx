@@ -36,7 +36,6 @@ export function App() {
           <button
             className="bg-slate-500 p-4 text-white font-bold rounded-xl w-full md:w-36 h-20"
             onClick={Send}
-            disabled={loading}
           >
             {loading ? (
               <div className="flex justify-center">
